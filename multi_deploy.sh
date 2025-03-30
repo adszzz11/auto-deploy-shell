@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
-source "$(dirname "$0")/common_utils.sh"
+source "$(dirname "$0")/_shell/common_utils.sh"
 
-# 인자 개수 체크: 정확히 2개 인자 필요 (예: multi_deploy.sh <target_instance_count> <env_file>)
+# 인자 개수 체크: 첫 번째 인자는 2 이상이어야 하고, 두 번째 인자는 환경 파일
 if [ "$#" -ne 2 ]; then
     echo "Usage: multi_deploy.sh <target_instance_count> <env_file>"
     exit 1
@@ -10,6 +10,13 @@ fi
 
 TARGET_COUNT="$1"
 ENV_FILE_RAW="$2"
+
+# 첫 번째 인자 (인스턴스 갯수)가 2 미만이거나 10 이상일 경우 종료
+if [ "$TARGET_COUNT" -lt 2 ] || [ "$TARGET_COUNT" -gt 10 ]; then
+    echo "Error: You must specify at least 2 instances and at most 10 instances to deploy."
+    exit 1
+fi
+
 # 환경 파일 이름에 포함된 CR(\r) 제거
 ENV_FILE="$(echo "$ENV_FILE_RAW" | tr -d '\r')"
 
@@ -56,7 +63,7 @@ export SCRIPT_DIR
 rollback_instance() {
     local instance_num="$1"
     log_info "Rolling back instance $instance_num..."
-    if ./rollback.sh "$instance_num" "$ENV_FILE"; then
+    if ./_shell/rollback.sh "$instance_num" "$ENV_FILE"; then
         log_info "Rollback succeeded for instance $instance_num."
     else
         log_warn "Rollback failed for instance $instance_num."
@@ -69,7 +76,7 @@ successful_instances=()
 for (( i=0; i<TARGET_COUNT; i++ )); do
     echo "--------------------------------------------------"
     log_info "Updating/Deploying instance number: $i"
-    if ./deploy.sh "$i" "$ENV_FILE" "deploy"; then
+    if ./_shell/deploy.sh "$i" "$ENV_FILE" "deploy"; then
         log_info "Instance $i updated/deployed successfully."
         successful_instances+=("$i")
     else
@@ -91,7 +98,7 @@ if [ "$CURRENT_COUNT" -gt "$TARGET_COUNT" ]; then
         if [ "$instance" -ge "$TARGET_COUNT" ]; then
             echo "--------------------------------------------------"
             log_info "Removing instance number: $instance"
-            ./deploy.sh "$instance" "$ENV_FILE" "remove"
+            ./_shell/deploy.sh "$instance" "$ENV_FILE" "remove"
         fi
     done
 fi
