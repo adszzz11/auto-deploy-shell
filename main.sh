@@ -37,7 +37,7 @@ ${MODULE_NAME} v${VERSION}
 Usage: main.sh <command> [arguments]
 
 Commands:
-  deploy <count> <env_file>           - Deploy multiple instances (2-10)
+  deploy <count> <env_file>           - Deploy multiple instances (2-5)
   rollback <env_file>                 - Rollback all instances
   status <env_file>                   - Show deployment status
   validate <count> <env_file>         - Validate before deployment
@@ -231,8 +231,8 @@ validate_instance_count() {
         return 1
     fi
 
-    if [ "$count" -lt 2 ] || [ "$count" -gt 10 ]; then
-        echo -e "${RED}[ERROR]${NC} Invalid instance count: $count (must be 2-10)" >&2
+    if [ "$count" -lt 2 ] || [ "$count" -gt 5 ]; then
+        echo -e "${RED}[ERROR]${NC} Invalid instance count: $count (must be 2-5)" >&2
         return 1
     fi
 

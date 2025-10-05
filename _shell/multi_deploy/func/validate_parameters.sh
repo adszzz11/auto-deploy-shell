@@ -7,7 +7,7 @@ validate_multi_deploy_parameters() {
     local target_count="$1"
     local env_file_raw="$2"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating multi-deploy parameters"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating multi-deploy parameters" >&2
 
     # 타겟 인스턴스 수 유효성 검증
     if ! [[ "$target_count" =~ ^[0-9]+$ ]]; then
@@ -39,15 +39,15 @@ validate_multi_deploy_parameters() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: target_count=$target_count, env_file=$env_file"
-    echo "$env_file"  # 정제된 환경 파일 경로 반환
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: target_count=$target_count, env_file=$env_file" >&2
+    echo "$env_file"  # 정제된 환경 파일 경로 반환 (stdout)
 }
 
 # 필수 환경 변수 검증
 validate_required_env_vars() {
     local env_file="$1"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating required environment variables"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating required environment variables" >&2
 
     # 환경 파일 로드
     source "$env_file"
@@ -63,7 +63,7 @@ validate_required_env_vars() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required environment variables present"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required environment variables present" >&2
     return 0
 }
 
@@ -74,7 +74,7 @@ validate_instance_directories() {
 
     local service_instances_dir="${service_base_dir}/${service_name}/instances"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating instance directories"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Validating instance directories" >&2
 
     # 서비스 베이스 디렉터리 확인
     if [ ! -d "$service_base_dir" ]; then
@@ -85,7 +85,7 @@ validate_instance_directories() {
     # 서비스 디렉터리 확인 (없으면 생성)
     local service_dir="${service_base_dir}/${service_name}"
     if [ ! -d "$service_dir" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating service directory: $service_dir"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating service directory: $service_dir" >&2
         mkdir -p "$service_dir" || {
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to create service directory: $service_dir" >&2
             return 1
@@ -94,14 +94,14 @@ validate_instance_directories() {
 
     # 인스턴스 디렉터리 확인 (없으면 생성)
     if [ ! -d "$service_instances_dir" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating instances directory: $service_instances_dir"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating instances directory: $service_instances_dir" >&2
         mkdir -p "$service_instances_dir" || {
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to create instances directory: $service_instances_dir" >&2
             return 1
         }
     fi
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance directories validated"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance directories validated" >&2
     return 0
 }
 
