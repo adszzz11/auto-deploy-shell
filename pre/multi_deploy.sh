@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-source "$(dirname "$0")/_shell/common_utils.sh"
+source "$(dirname "$0")/_shell/common_utils/common_utils_main.sh"
 
 # 인자 개수 체크: 첫 번째 인자는 2 이상이어야 하고, 두 번째 인자는 환경 파일
 if [ "$#" -ne 2 ]; then

@@ -1,8 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# current_timestamp 함수 import
-source "$(dirname "$0")/current_timestamp.sh"
+# current_timestamp 함수 import (common_utils_main.sh에서 로드하는 경우 스킵)
+if ! declare -f current_timestamp >/dev/null 2>&1; then
+    source "$(dirname "${BASH_SOURCE[0]}")/current_timestamp.sh"
+fi
 
 # 정보 출력용 함수
 log_info() {

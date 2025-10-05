@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Load common utilities for consistent logging
+source "$(dirname "$0")/_shell/common_utils.sh"
+
 # 사용법: test_instance.sh <port>
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 <port>"
@@ -10,7 +13,7 @@ fi
 PORT="$1"
 FAIL=0
 
-echo "Starting tests for instance on port $PORT..."
+log_info "Starting tests for instance on port $PORT..."
 ################################################################
 # 스크립트 적용법
 # 이 아래에, 사용자가 원하는 테스트를 작성합니다.
@@ -46,9 +49,8 @@ fi
 
 #===============================================================
 if [ "$FAIL" -eq 0 ]; then
-  echo "All tests passed."
+  log_success "All tests passed for instance on port $PORT"
   exit 0
 else
-  echo "Some tests failed."
-  exit 1
+  error_exit "Some tests failed for instance on port $PORT"
 fi
