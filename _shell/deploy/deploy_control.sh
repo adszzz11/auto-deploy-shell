@@ -94,7 +94,20 @@ load_environment() {
     export TARGET_LINK="${INSTANCE_DIR}/current.jar"
     export JAR_TRUNK_DIR="${SERVICE_BASE_DIR}/${SERVICE_NAME}/jar_trunk"  # 자동 생성
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT"
+    # Machine ID 계산 (물리 서버 구분)
+    local type="${TYPE:-A}"  # 기본값 A
+    local machine_id_offset=0
+
+    if [ "$type" = "B" ]; then
+        machine_id_offset=5
+    elif [ "$type" != "A" ]; then
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Invalid TYPE: $type, using A (0-4)"
+        type="A"
+    fi
+
+    export MACHINE_ID=$((instance_num + machine_id_offset))
+
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT, TYPE=$type, MACHINE_ID=$MACHINE_ID"
     return 0
 }
 
