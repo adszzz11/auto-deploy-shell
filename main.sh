@@ -51,8 +51,7 @@ Environment File:
   2. Edit settings:    vi myapp.env
   3. Deploy:           ./main.sh deploy 5 myapp.env
 
-  Module .env files (deploy.env, nginx.env, etc.) provide defaults.
-  Your base.env overrides them all.
+  All module defaults are hardcoded. No need for separate .env files.
 
 Examples:
   # First time setup
@@ -79,17 +78,14 @@ Architecture:
 
 Advanced Usage (for debugging or single instance control):
   # Multi-deploy module directly
-  ${SCRIPT_DIR}/multi_deploy/multi_deploy_control.sh --help
+  ${SCRIPT_DIR}/_shell/multi_deploy/multi_deploy_control.sh --help
 
   # Individual modules (Layer 3-4)
-  ${SCRIPT_DIR}/deploy/deploy_control.sh --help
-  ${SCRIPT_DIR}/rollback/rollback_control.sh --help
-  ${SCRIPT_DIR}/test_instance/test_instance_control.sh --help
+  ${SCRIPT_DIR}/_shell/deploy/deploy_control.sh --help
+  ${SCRIPT_DIR}/_shell/rollback/rollback_control.sh --help
 
 Documentation:
-  ${SCRIPT_DIR}/README.md          - User guide
-  ${SCRIPT_DIR}/ARCHITECTURE.md    - System architecture
-  ${SCRIPT_DIR}/HIERARCHY.md       - Module hierarchy
+  ${SCRIPT_DIR}/CLAUDE.md          - Project documentation
 
 Note: For most use cases, use this main.sh script only.
       Direct module access is for advanced users.
@@ -108,17 +104,16 @@ Module Hierarchy:
     └─ main.sh (this script)
 
   Layer 2 (Orchestration):
-    └─ multi_deploy/multi_deploy_control.sh
+    └─ _shell/multi_deploy/multi_deploy_control.sh
 
   Layer 3 (Core Operations):
-    ├─ deploy/deploy_control.sh
-    └─ rollback/rollback_control.sh
+    ├─ _shell/deploy/deploy_control.sh
+    └─ _shell/rollback/rollback_control.sh
 
   Layer 4 (Support Services):
-    ├─ nginx/nginx_control.sh
-    ├─ link_jar/link_jar_control.sh
-    ├─ run_app/run_app_control.sh
-    └─ test_instance/test_instance_control.sh
+    ├─ _shell/nginx/nginx_control.sh
+    ├─ _shell/link_jar/link_jar_control.sh
+    └─ _shell/run_app/run_app_control.sh
 
 Design:
   - main.sh only calls multi_deploy (strict layer separation)
@@ -133,7 +128,7 @@ EOF
 check_module_script() {
     local module_name="$1"
     local script_name="$2"
-    local script_path="${SCRIPT_DIR}/${module_name}/${script_name}"
+    local script_path="${SCRIPT_DIR}/_shell/${module_name}/${script_name}"
 
     if [ ! -f "$script_path" ]; then
         echo -e "${RED}[ERROR]${NC} Module script not found: $script_path" >&2

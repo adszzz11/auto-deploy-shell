@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/rollback.env" ]; then
-    source "${SCRIPT_DIR}/rollback.env"
-fi
 
 # JAR 롤백 실행
 execute_jar_rollback() {

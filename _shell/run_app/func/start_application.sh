@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/run_app.env" ]; then
-    source "${SCRIPT_DIR}/run_app.env"
-fi
 
 # 애플리케이션 시작 함수
 start_application() {

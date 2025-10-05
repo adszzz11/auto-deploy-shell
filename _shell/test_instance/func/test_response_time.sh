@@ -3,11 +3,6 @@ set -euo pipefail
 
 # test_response_time.sh - Response Time Testing
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/test_instance.env" ]; then
-    source "${SCRIPT_DIR}/test_instance.env"
-fi
 
 # 응답 시간 측정 (curl 사용)
 measure_response_time_curl() {

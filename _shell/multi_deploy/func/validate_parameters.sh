@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/multi_deploy.env" ]; then
-    source "${SCRIPT_DIR}/multi_deploy.env"
-fi
 
 # 다중 배포 파라미터 검증
 validate_multi_deploy_parameters() {
@@ -20,8 +15,8 @@ validate_multi_deploy_parameters() {
         return 1
     fi
 
-    local min_instances="${MULTI_DEPLOY_MIN_INSTANCES:-2}"
-    local max_instances="${MULTI_DEPLOY_MAX_INSTANCES:-10}"
+    local min_instances=2  # 하드코딩: 최소 2개 인스턴스 필수
+    local max_instances=5  # 하드코딩: 최대 5개 인스턴스 고정
 
     if [ "$target_count" -lt "$min_instances" ] || [ "$target_count" -gt "$max_instances" ]; then
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Target instance count must be between $min_instances-$max_instances: $target_count" >&2
@@ -61,7 +56,6 @@ validate_required_env_vars() {
     [ -z "${SERVICE_NAME:-}" ] && missing_vars+=("SERVICE_NAME")
     [ -z "${SERVICE_BASE_DIR:-}" ] && missing_vars+=("SERVICE_BASE_DIR")
     [ -z "${BASE_PORT:-}" ] && missing_vars+=("BASE_PORT")
-    [ -z "${JAR_TRUNK_DIR:-}" ] && missing_vars+=("JAR_TRUNK_DIR")
     [ -z "${UPSTREAM_CONF:-}" ] && missing_vars+=("UPSTREAM_CONF")
 
     if [ ${#missing_vars[@]} -gt 0 ]; then

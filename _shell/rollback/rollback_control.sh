@@ -17,11 +17,6 @@ set -euo pipefail
 # 현재 디렉터리 설정
 SCRIPT_DIR="$(cd "$(dirname "$0")") && pwd)"
 
-# rollback.env 파일 로드 (존재하는 경우)
-if [ -f "${SCRIPT_DIR}/rollback.env" ]; then
-    source "${SCRIPT_DIR}/rollback.env"
-fi
-
 # 모든 함수 스크립트들 source (func 디렉터리에서)
 source "${SCRIPT_DIR}/func/validate_rollback.sh"
 source "${SCRIPT_DIR}/func/execute_rollback.sh"

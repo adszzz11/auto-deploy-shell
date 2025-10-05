@@ -17,11 +17,6 @@ set -euo pipefail
 # 현재 디렉터리 설정
 SCRIPT_DIR="$(cd "$(dirname "$0")") && pwd)"
 
-# deploy.env 파일 로드 (존재하는 경우)
-if [ -f "${SCRIPT_DIR}/deploy.env" ]; then
-    source "${SCRIPT_DIR}/deploy.env"
-fi
-
 # 모든 함수 스크립트들 source (func 디렉터리에서)
 source "${SCRIPT_DIR}/func/validate_deployment.sh"
 source "${SCRIPT_DIR}/func/prepare_deployment.sh"
@@ -85,7 +80,7 @@ load_environment() {
     source "$env_file"
 
     # 필수 환경 변수 확인
-    local required_vars=("SERVICE_NAME" "BASE_PORT" "JAR_TRUNK_DIR" "SERVICE_BASE_DIR" "UPSTREAM_CONF")
+    local required_vars=("SERVICE_NAME" "BASE_PORT" "SERVICE_BASE_DIR" "UPSTREAM_CONF")
     for var in "${required_vars[@]}"; do
         if [ -z "${!var:-}" ]; then
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Required environment variable not set: $var" >&2
@@ -97,6 +92,7 @@ load_environment() {
     export PORT="${BASE_PORT}${instance_num}"
     export INSTANCE_DIR="${SERVICE_BASE_DIR}/${SERVICE_NAME}/instances/${instance_num}"
     export TARGET_LINK="${INSTANCE_DIR}/current.jar"
+    export JAR_TRUNK_DIR="${SERVICE_BASE_DIR}/${SERVICE_NAME}/jar_trunk"  # 자동 생성
 
     echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT"
     return 0
@@ -158,21 +154,11 @@ execute_deploy() {
         return 1
     }
 
-    # 11. 테스트 실행 (test_instance 모듈 우선, 레거시 폴백)
-    if [ "${TEST_INSTANCE_ENABLED:-false}" = "true" ]; then
-        # test_instance 모듈 사용
-        execute_instance_tests "$PORT" "$env_file" "$SCRIPT_DIR" "${SERVICE_NAME:-}" || {
-            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Instance tests failed" >&2
-            control_nginx_upstream "up" "$PORT" "$UPSTREAM_CONF" "$SCRIPT_DIR" "${DEPLOY_NGINX_DOWN_ON_ERROR:-true}"
-            return 1
-        }
-    else
-        # 레거시 TEST_SCRIPT 사용
-        execute_test_script "${TEST_SCRIPT:-}" "$PORT" "${DEPLOY_RUN_TESTS:-true}" "${DEPLOY_TEST_TIMEOUT:-60}" || {
-            control_nginx_upstream "up" "$PORT" "$UPSTREAM_CONF" "$SCRIPT_DIR" "${DEPLOY_NGINX_DOWN_ON_ERROR:-true}"
-            return 1
-        }
-    fi
+    # 11. 테스트 실행 (사용자 정의 스크립트)
+    execute_test_script "${TEST_SCRIPT:-}" "$PORT" "${DEPLOY_RUN_TESTS:-true}" "${DEPLOY_TEST_TIMEOUT:-60}" || {
+        control_nginx_upstream "up" "$PORT" "$UPSTREAM_CONF" "$SCRIPT_DIR" "${DEPLOY_NGINX_DOWN_ON_ERROR:-true}"
+        return 1
+    }
 
     # 12. Nginx 트래픽 복구
     control_nginx_upstream "up" "$PORT" "$UPSTREAM_CONF" "$SCRIPT_DIR" "${DEPLOY_NGINX_CONTROL:-true}" || {

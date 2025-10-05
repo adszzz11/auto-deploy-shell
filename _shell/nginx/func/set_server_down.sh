@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/nginx.env" ]; then
-    source "${SCRIPT_DIR}/nginx.env"
-fi
 
 # 서버를 DOWN 상태로 설정하는 함수 (주석 처리)
 set_server_down() {

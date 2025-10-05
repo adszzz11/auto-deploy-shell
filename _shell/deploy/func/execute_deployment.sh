@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/deploy.env" ]; then
-    source "${SCRIPT_DIR}/deploy.env"
-fi
 
 # 배포 실행
 execute_application_deployment() {
@@ -193,7 +188,7 @@ setup_instance_logs() {
     echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting up logs for instance $instance_num"
 
     # 로그 디렉터리 생성
-    local log_dir="${log_base_dir}/${service_name}/instance-${instance_num}"
+    local log_dir="${log_base_dir}/${service_name}/instances/${instance_num}"
     if [ ! -d "$log_dir" ]; then
         mkdir -p "$log_dir" || {
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to create log directory: $log_dir" >&2

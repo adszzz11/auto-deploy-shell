@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/link_jar.env" ]; then
-    source "${SCRIPT_DIR}/link_jar.env"
-fi
 
 # 기존 링크/파일 제거
 remove_existing_link() {

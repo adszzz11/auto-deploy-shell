@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/multi_deploy.env" ]; then
-    source "${SCRIPT_DIR}/multi_deploy.env"
-fi
 
 # 현재 배포된 인스턴스 분석
 analyze_current_instances() {

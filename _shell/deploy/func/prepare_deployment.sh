@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/deploy.env" ]; then
-    source "${SCRIPT_DIR}/deploy.env"
-fi
 
 # 배포 환경 준비
 prepare_deploy_environment() {

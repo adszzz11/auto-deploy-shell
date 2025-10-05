@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/link_jar.env" ]; then
-    source "${SCRIPT_DIR}/link_jar.env"
-fi
 
 # JAR 파일명 유효성 검증
 validate_jar_name() {

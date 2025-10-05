@@ -17,11 +17,6 @@ set -euo pipefail
 # 현재 디렉터리 설정
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# multi_deploy.env 파일 로드 (존재하는 경우)
-if [ -f "${SCRIPT_DIR}/multi_deploy.env" ]; then
-    source "${SCRIPT_DIR}/multi_deploy.env"
-fi
-
 # 모든 함수 스크립트들 source (func 디렉터리에서)
 source "${SCRIPT_DIR}/func/validate_parameters.sh"
 source "${SCRIPT_DIR}/func/analyze_instances.sh"
@@ -38,11 +33,9 @@ Commands:
   status <env_file>                    - Show current deployment status
   validate <target_count> <env_file>   - Validate deployment prerequisites
 
-Note: Target count must be between 2-10
+Note: Target count must be between 2-5 (hard limit, not configurable)
 
 Environment variables (set in multi_deploy.env):
-  MULTI_DEPLOY_MIN_INSTANCES          - Minimum instances (default: 2)
-  MULTI_DEPLOY_MAX_INSTANCES          - Maximum instances (default: 10)
   MULTI_DEPLOY_PARALLEL               - Parallel deployment (default: false)
   MULTI_DEPLOY_AUTO_ROLLBACK          - Auto rollback on failure (default: true)
   MULTI_DEPLOY_CONTINUE_ON_ERROR      - Continue on error (default: false)

@@ -3,11 +3,6 @@ set -euo pipefail
 
 # validate_test_params.sh - Test Parameter Validation
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/test_instance.env" ]; then
-    source "${SCRIPT_DIR}/test_instance.env"
-fi
 
 # 필수 환경 변수 검증
 validate_required_env_vars() {

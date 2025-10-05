@@ -3,11 +3,6 @@ set -euo pipefail
 
 # test_http_status.sh - HTTP Status Code Testing
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/test_instance.env" ]; then
-    source "${SCRIPT_DIR}/test_instance.env"
-fi
 
 # HTTP 상태 코드 테스트 (재시도 포함)
 test_http_status_with_retry() {

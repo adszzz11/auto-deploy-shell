@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/..") && pwd)"
-if [ -f "${SCRIPT_DIR}/multi_deploy.env" ]; then
-    source "${SCRIPT_DIR}/multi_deploy.env"
-fi
 
 # 다중 배포 실행
 execute_multi_deployment() {

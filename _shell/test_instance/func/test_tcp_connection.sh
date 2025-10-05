@@ -3,11 +3,6 @@ set -euo pipefail
 
 # test_tcp_connection.sh - TCP Connection Testing
 
-# .env 파일 로드 (존재하는 경우)
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-if [ -f "${SCRIPT_DIR}/test_instance.env" ]; then
-    source "${SCRIPT_DIR}/test_instance.env"
-fi
 
 # TCP 연결 테스트 (nc 사용)
 test_tcp_with_nc() {
