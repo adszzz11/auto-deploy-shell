@@ -15,7 +15,7 @@ set -euo pipefail
 #   - Layer 4 서비스 모듈 오케스트레이션
 
 # 현재 디렉터리 설정
-SCRIPT_DIR="$(cd "$(dirname "$0")") && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # 모든 함수 스크립트들 source (func 디렉터리에서)
 source "${SCRIPT_DIR}/func/validate_rollback.sh"
