@@ -11,13 +11,13 @@ remove_existing_link() {
     if [ -L "$target_link" ] || [ -e "$target_link" ]; then
         if [ "$backup_enabled" = "true" ]; then
             local backup_file="${target_link}${backup_suffix}"
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up existing file: $target_link -> $backup_file"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up existing file: $target_link -> $backup_file" >&2
             mv "$target_link" "$backup_file" || {
                 echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to backup existing file" >&2
                 return 1
             }
         else
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Removing existing link/file at $target_link"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Removing existing link/file at $target_link" >&2
             rm -f "$target_link" || {
                 echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to remove existing link/file" >&2
                 return 1
@@ -34,7 +34,7 @@ create_symbolic_link() {
 
     # 심볼릭 링크 생성
     if ln -s "$jar_path" "$target_link"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Symbolic link created: $target_link -> $jar_path"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Symbolic link created: $target_link -> $jar_path" >&2
     else
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to create symbolic link" >&2
         return 1
@@ -43,7 +43,7 @@ create_symbolic_link() {
     # 생성된 링크 검증
     if [ "$verify" = "true" ]; then
         if [ -L "$target_link" ] && [ -e "$target_link" ]; then
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Symbolic link verification passed"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Symbolic link verification passed" >&2
         else
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Symbolic link verification failed: $target_link" >&2
             return 1

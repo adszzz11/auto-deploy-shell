@@ -23,7 +23,7 @@ read_jar_name_from_pid() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR name read from PID file: $jar_name"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR name read from PID file: $jar_name" >&2
     echo "$jar_name"
 }
 

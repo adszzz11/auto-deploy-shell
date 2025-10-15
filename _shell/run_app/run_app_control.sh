@@ -41,6 +41,7 @@ Note: Arguments in [brackets] are optional and can use defaults from run_app.env
 
 Environment variables (set in run_app.env):
   APP_JAR_NAME          - Default JAR file name (default: current.jar)
+  APP_JAVA_EXECUTABLE   - Java executable path (default: java)
   APP_JAVA_OPTS         - Default Java options
   APP_SIGTERM_TIMEOUT   - SIGTERM timeout in seconds (default: 10)
   APP_SIGKILL_TIMEOUT   - SIGKILL timeout in seconds (default: 5)
@@ -118,7 +119,7 @@ main() {
                 exit 1
             fi
             status=$(check_app_running "$1" "${2:-}")
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status" >&2
             ;;
         info)
             if [ "$#" -lt 1 ]; then

@@ -15,14 +15,14 @@ stop_application() {
     # 프로세스 찾기
     local pid
     if ! pid=$(find_app_process "$port" "$jar_name"); then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No app running on port ${port}. Nothing to stop."
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No app running on port ${port}. Nothing to stop." >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Stopping app with PID: $pid"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Stopping app with PID: $pid" >&2
 
     # 1단계: SIGTERM 전송
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sending SIGTERM to process $pid"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sending SIGTERM to process $pid" >&2
     kill -15 "$pid"
 
     # SIGTERM 대기
@@ -31,19 +31,19 @@ stop_application() {
         sleep 1
         wait_time=$((wait_time + 1))
         if [ "$wait_time" -ge "$sigterm_timeout" ]; then
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid did not terminate after $sigterm_timeout seconds, sending SIGKILL..."
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid did not terminate after $sigterm_timeout seconds, sending SIGKILL..." >&2
             break
         fi
     done
 
     # 프로세스가 종료되었는지 확인
     if ! kill -0 "$pid" 2>/dev/null; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid terminated gracefully"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid terminated gracefully" >&2
         return 0
     fi
 
     # 2단계: SIGKILL 전송
-    echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Sending SIGKILL to process $pid"
+    echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Sending SIGKILL to process $pid" >&2
     kill -9 "$pid"
 
     # SIGKILL 대기
@@ -52,12 +52,12 @@ stop_application() {
         sleep 1
         wait_time=$((wait_time + 1))
         if [ "$wait_time" -ge "$sigkill_timeout" ]; then
-            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid did not terminate even after SIGKILL"
+            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid did not terminate even after SIGKILL" >&2
             return 1
         fi
     done
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid has terminated"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid has terminated" >&2
 }
 
 # 강제 중지 함수 (SIGKILL만 사용)
@@ -69,19 +69,19 @@ force_stop_application() {
 
     local pid
     if ! pid=$(find_app_process "$port" "$jar_name"); then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No app running on port ${port}. Nothing to stop."
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No app running on port ${port}. Nothing to stop." >&2
         return 0
     fi
 
-    echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Force stopping app with PID: $pid (SIGKILL)"
+    echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Force stopping app with PID: $pid (SIGKILL)" >&2
     kill -9 "$pid"
 
     sleep 2
     if kill -0 "$pid" 2>/dev/null; then
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to force stop process $pid"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to force stop process $pid" >&2
         return 1
     else
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid force stopped"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Process $pid force stopped" >&2
     fi
 }
 

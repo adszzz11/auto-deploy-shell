@@ -6,19 +6,19 @@ backup_config() {
     local config_file="$1"
     local backup_file="${config_file}.bak.$(date +%Y%m%d_%H%M%S)"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up configuration file"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up configuration file" >&2
 
     if [ ! -f "$config_file" ]; then
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $config_file"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $config_file" >&2
         return 1
     fi
 
     if cp "$config_file" "$backup_file"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Configuration backed up to: $backup_file"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Configuration backed up to: $backup_file" >&2
         echo "$backup_file"
         return 0
     else
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to backup configuration file"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to backup configuration file" >&2
         return 1
     fi
 }

@@ -8,7 +8,7 @@ restart_application() {
     local java_opts="${2:-${APP_JAVA_OPTS:-}}"
     local jar_name="${3:-${APP_JAR_NAME:-current.jar}}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Restarting application on port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Restarting application on port $port" >&2
 
     # 필요한 함수 로드
     source "${SCRIPT_DIR}/func/stop_application.sh"
@@ -20,7 +20,7 @@ restart_application() {
     # 시작
     start_application "$port" "$java_opts" "$jar_name"
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application restarted successfully on port $port"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application restarted successfully on port $port" >&2
 }
 
 # 헬스체크와 함께 재시작
@@ -29,7 +29,7 @@ restart_with_healthcheck() {
     local java_opts="${2:-${APP_JAVA_OPTS:-}}"
     local jar_name="${3:-${APP_JAR_NAME:-current.jar}}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Restarting application on port $port with health check"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Restarting application on port $port with health check" >&2
 
     source "${SCRIPT_DIR}/func/stop_application.sh"
     source "${SCRIPT_DIR}/func/start_application.sh"
@@ -40,7 +40,7 @@ restart_with_healthcheck() {
     # 헬스체크와 함께 시작
     start_with_healthcheck "$port" "$java_opts" "$jar_name"
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application restarted and health check passed on port $port"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application restarted and health check passed on port $port" >&2
 }
 
 # 스크립트가 직접 실행된 경우

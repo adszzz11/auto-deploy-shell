@@ -15,9 +15,12 @@ start_application() {
 
     # 이미 실행 중인지 확인
     if find_app_process "$port" "$jar_name" >/dev/null 2>&1; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Application is already running on port $port"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Application is already running on port $port" >&2
         return 0
     fi
+
+    # Java 실행 파일 검증
+    verify_java_executable "${APP_JAVA_EXECUTABLE:-java}" || return 1
 
     # JAR 파일 확인
     verify_jar_file "$jar_name"
@@ -30,7 +33,7 @@ start_application() {
     local exec_command
     exec_command=$(build_exec_command "$port" "$java_opts" "$jar_name")
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting application with command: $exec_command"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting application with command: $exec_command" >&2
 
     # 백그라운드에서 애플리케이션 시작
     nohup $exec_command > "${log_dir}/app-${port}.log" 2>&1 &
@@ -40,9 +43,9 @@ start_application() {
     sleep "$start_wait"
 
     if kill -0 "$start_pid" 2>/dev/null; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application started on port $port (PID: $start_pid)"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application started on port $port (PID: $start_pid)" >&2
     else
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to start application on port $port"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to start application on port $port" >&2
         return 1
     fi
 }
@@ -64,19 +67,19 @@ start_with_healthcheck() {
         local timeout="${APP_HEALTH_CHECK_TIMEOUT:-30}"
         local interval="${APP_HEALTH_CHECK_INTERVAL:-2}"
 
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Performing health check on $health_url"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Performing health check on $health_url" >&2
 
         local elapsed=0
         while [ $elapsed -lt $timeout ]; do
             if curl -sf "$health_url" > /dev/null 2>&1; then
-                echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Health check passed"
+                echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Health check passed" >&2
                 return 0
             fi
             sleep "$interval"
             elapsed=$((elapsed + interval))
         done
 
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Health check failed after ${timeout}s"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Health check failed after ${timeout}s" >&2
         return 1
     fi
 }

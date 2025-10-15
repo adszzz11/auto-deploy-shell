@@ -104,8 +104,8 @@ execute_deploy() {
     current_count=$(calculate_current_instance_count "$SERVICE_BASE_DIR" "$SERVICE_NAME")
 
     echo ""
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Current deployed instance count: ${current_count}"
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Target instance count: ${target_count}"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Current deployed instance count: ${current_count}" >&2
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Target instance count: ${target_count}" >&2
     echo ""
 
     # 5. 현재 상태 표시
@@ -127,13 +127,13 @@ execute_deploy() {
     local stabilization_wait="${MULTI_DEPLOY_STABILIZATION_WAIT:-5}"
     if [ "$stabilization_wait" -gt 0 ]; then
         echo ""
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${stabilization_wait}s for services to stabilize..."
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${stabilization_wait}s for services to stabilize..." >&2
         sleep "$stabilization_wait"
     fi
 
     echo ""
     echo "=================================================="
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Multi Deployment complete"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Multi Deployment complete" >&2
     echo "=================================================="
     return 0
 }
@@ -157,14 +157,14 @@ execute_rollback_all() {
     local trimmed_instances=$(echo "$instances_str" | tr -d ' ')
 
     if [ -z "$trimmed_instances" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No instances found to rollback"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No instances found to rollback" >&2
         return 0
     fi
 
     local instances_array=($instances_str)
     local instance_count=${#instances_array[@]}
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Found $instance_count instances to rollback: ${instances_array[*]}"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Found $instance_count instances to rollback: ${instances_array[*]}" >&2
     echo ""
 
     # rollback_control.sh 경로
@@ -182,7 +182,7 @@ execute_rollback_all() {
         echo "==================================================[ Rollback Instance $instance ]=="
 
         if "$rollback_script" rollback "$instance" "$env_file"; then
-            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance $instance rolled back successfully"
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance $instance rolled back successfully" >&2
         else
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to rollback instance $instance" >&2
             rollback_failed=true
@@ -190,7 +190,7 @@ execute_rollback_all() {
 
         # 다음 롤백 전 대기
         if [ "$i" -gt 0 ] && [ "${MULTI_DEPLOY_WAIT_BETWEEN_DEPLOYS:-2}" -gt 0 ]; then
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${MULTI_DEPLOY_WAIT_BETWEEN_DEPLOYS}s before next rollback"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${MULTI_DEPLOY_WAIT_BETWEEN_DEPLOYS}s before next rollback" >&2
             sleep "${MULTI_DEPLOY_WAIT_BETWEEN_DEPLOYS}"
         fi
     done
@@ -198,10 +198,10 @@ execute_rollback_all() {
     echo ""
     echo "=================================================="
     if [ "$rollback_failed" = "true" ]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Multi-instance rollback completed with some failures"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Multi-instance rollback completed with some failures" >&2
         return 1
     else
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Multi-instance rollback completed successfully"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Multi-instance rollback completed successfully" >&2
         return 0
     fi
 }

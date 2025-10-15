@@ -15,14 +15,14 @@ prepare_deploy_environment() {
 
     # 인스턴스 디렉터리 생성 (없는 경우)
     if [ ! -d "$instance_dir" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating instance directory: $instance_dir"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating instance directory: $instance_dir" >&2
         mkdir -p "$instance_dir" || {
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to create instance directory" >&2
             return 1
         }
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Deploy environment prepared successfully"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Deploy environment prepared successfully" >&2
     return 0
 }
 
@@ -32,22 +32,22 @@ backup_current_jar() {
     local backup_enabled="${2:-${DEPLOY_BACKUP_JAR:-true}}"
 
     if [ "$backup_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR backup disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR backup disabled" >&2
         return 0
     fi
 
     if [ -L "$target_link" ] || [ -e "$target_link" ]; then
         local backup_file="${target_link}.bak"
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up current.jar: $target_link -> $backup_file"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up current.jar: $target_link -> $backup_file" >&2
 
         mv "$target_link" "$backup_file" || {
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to backup current.jar" >&2
             return 1
         }
 
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR backup completed"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR backup completed" >&2
     else
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No existing JAR to backup"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No existing JAR to backup" >&2
     fi
 
     return 0
@@ -71,14 +71,14 @@ sync_runapp_script() {
     if [ -f "$runapp_dest" ]; then
         # 파일 비교 (동일한지 확인)
         if cmp -s "$runapp_src" "$runapp_dest"; then
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - runApp.sh is already up-to-date"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - runApp.sh is already up-to-date" >&2
             return 0
         fi
 
         # 백업 활성화 시
         if [ "$backup_enabled" = "true" ]; then
             local backup_file="${runapp_dest}.bak"
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up existing runApp.sh: $runapp_dest -> $backup_file"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backing up existing runApp.sh: $runapp_dest -> $backup_file" >&2
 
             mv "$runapp_dest" "$backup_file" || {
                 echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to backup existing runApp.sh" >&2
@@ -88,13 +88,13 @@ sync_runapp_script() {
     fi
 
     # runApp.sh 복사
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Copying runApp.sh to $instance_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Copying runApp.sh to $instance_dir" >&2
     cp "$runapp_src" "$runapp_dest" || {
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to copy runApp.sh" >&2
         return 1
     }
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - runApp.sh synchronized successfully"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - runApp.sh synchronized successfully" >&2
 
     # 실행 권한 부여 (복사된 파일에 자동으로 부여되므로 선택적)
     chmod +x "$runapp_dest" 2>/dev/null || true

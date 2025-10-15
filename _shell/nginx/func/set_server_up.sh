@@ -9,11 +9,11 @@ set_server_up() {
     local server_ip="${3:-${NGINX_SERVER_IP:-127.0.0.1}}"
     local config_postfix="${4:-${NGINX_CONFIG_POSTFIX:-}}"  # 예: "weight=5", "max_fails=3 fail_timeout=30s", "backup"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting server on port $port to UP state"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting server on port $port to UP state" >&2
 
     # 해당 포트가 설정 파일에 존재하는지 확인
     if ! grep -q "server.*:$port" "$upstream_conf"; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Adding new server for port $port"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Adding new server for port $port" >&2
 
         # 서버 라인 구성
         local server_line="    server ${server_ip}:${port}"
@@ -26,17 +26,17 @@ set_server_up() {
         if sed -i.bak "/^[[:space:]]*}/ i\\
 ${server_line}
 " "$upstream_conf"; then
-            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - New server added: $server_line"
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - New server added: $server_line" >&2
         else
-            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to add new server for port $port"
+            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to add new server for port $port" >&2
             return 1
         fi
     else
         # 기존 주석 처리된 서버 라인의 주석 제거
         if sed -i.bak "/^[[:space:]]*#[[:space:]]*server.*:$port/ s/^[[:space:]]*#[[:space:]]*/    /" "$upstream_conf"; then
-            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port uncommented (set to UP)"
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port uncommented (set to UP)" >&2
         else
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Server may already be UP on port $port"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Server may already be UP on port $port" >&2
         fi
     fi
 }

@@ -27,7 +27,7 @@ validate_rollback_parameters() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: instance=$instance_num"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: instance=$instance_num" >&2
     return 0
 }
 
@@ -45,7 +45,7 @@ validate_required_env_vars() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required environment variables present"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required environment variables present" >&2
     return 0
 }
 
@@ -78,11 +78,11 @@ verify_backup_exists() {
     local verify_enabled="${3:-${ROLLBACK_VERIFY_BACKUP:-true}}"
 
     if [ "$verify_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup verification disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup verification disabled" >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verifying backup for instance $instance_num"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verifying backup for instance $instance_num" >&2
 
     if [ ! -e "$backup_link" ]; then
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - No backup found for instance $instance_num at: $backup_link" >&2
@@ -98,7 +98,7 @@ verify_backup_exists() {
     # 심볼릭 링크인 경우 타겟 확인
     if [ -L "$backup_link" ]; then
         local backup_target=$(readlink "$backup_link")
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup is a symbolic link: $backup_link -> $backup_target"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup is a symbolic link: $backup_link -> $backup_target" >&2
 
         if [ ! -f "$backup_target" ]; then
             echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Backup link target not found: $backup_target" >&2
@@ -106,7 +106,7 @@ verify_backup_exists() {
         fi
     fi
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup verified"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup verified" >&2
     return 0
 }
 
@@ -117,11 +117,11 @@ verify_backup_integrity() {
     local verify_enabled="${3:-${ROLLBACK_VERIFY_INTEGRITY:-false}}"
 
     if [ "$verify_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup integrity verification disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup integrity verification disabled" >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verifying backup integrity for instance $instance_num"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verifying backup integrity for instance $instance_num" >&2
 
     local backup_file="$backup_link"
     if [ -L "$backup_link" ]; then
@@ -137,18 +137,18 @@ verify_backup_integrity() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup file size: $file_size bytes"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Backup file size: $file_size bytes" >&2
 
     # JAR 파일 구조 검증 (unzip 사용 가능한 경우)
     if command -v unzip >/dev/null 2>&1; then
         if unzip -t "$backup_file" >/dev/null 2>&1; then
-            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup JAR structure is valid"
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup JAR structure is valid" >&2
         else
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Backup JAR structure may be corrupted"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Backup JAR structure may be corrupted" >&2
         fi
     fi
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup integrity verified"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Backup integrity verified" >&2
     return 0
 }
 
@@ -159,11 +159,11 @@ check_disk_space() {
     local check_enabled="${3:-${ROLLBACK_CHECK_DISK_SPACE:-true}}"
 
     if [ "$check_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Disk space check disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Disk space check disabled" >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Checking disk space"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Checking disk space" >&2
 
     local backup_file="$backup_link"
     if [ -L "$backup_link" ]; then
@@ -180,9 +180,9 @@ check_disk_space() {
         available_space=$((available_space * 1024))
 
         if [ "$file_size" -gt "$available_space" ]; then
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Low disk space: need $file_size bytes, available $available_space bytes"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Low disk space: need $file_size bytes, available $available_space bytes" >&2
         else
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sufficient disk space available"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sufficient disk space available" >&2
         fi
     fi
 

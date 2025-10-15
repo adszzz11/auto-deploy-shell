@@ -48,7 +48,7 @@ validate_test_parameters() {
         fi
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test parameters validated: port=$port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test parameters validated: port=$port" >&2
     return 0
 }
 
@@ -58,7 +58,7 @@ validate_test_mode() {
 
     case "$mode" in
         simple|full|custom)
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test mode: $mode"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test mode: $mode" >&2
             return 0
             ;;
         *)
@@ -87,7 +87,7 @@ validate_custom_test_script() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Custom test script validated: $test_script"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Custom test script validated: $test_script" >&2
     return 0
 }
 
@@ -142,8 +142,8 @@ validate_http_endpoint() {
 
     # 엔드포인트는 /로 시작해야 함
     if [[ ! "$endpoint" =~ ^/ ]]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - HTTP endpoint should start with /: $endpoint"
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Auto-correcting to: /$endpoint"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - HTTP endpoint should start with /: $endpoint" >&2
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Auto-correcting to: /$endpoint" >&2
         export TEST_HTTP_ENDPOINT="/$endpoint"
     fi
 
@@ -158,18 +158,18 @@ validate_port_accessibility() {
     # 포트가 리스닝 중인지 확인 (nc 또는 /dev/tcp 사용)
     if command -v nc &> /dev/null; then
         if ! nc -z "$host" "$port" 2>/dev/null; then
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is not accessible (may not be listening yet)"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is not accessible (may not be listening yet)" >&2
             return 1
         fi
     else
         # nc가 없으면 /dev/tcp 사용
         if ! timeout 2 bash -c "echo > /dev/tcp/$host/$port" 2>/dev/null; then
-            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is not accessible (may not be listening yet)"
+            echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is not accessible (may not be listening yet)" >&2
             return 1
         fi
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is accessible"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is accessible" >&2
     return 0
 }
 

@@ -76,7 +76,7 @@ create_jar_link() {
     local target_link="$2"
     local jar_source="${3:-}"  # jar_name 또는 pid_file
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting JAR link creation process"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting JAR link creation process" >&2
 
     # 1. JAR 디렉터리 검증
     validate_jar_directory "$jar_dir"
@@ -110,7 +110,7 @@ create_jar_link() {
     # 7. 새 심볼릭 링크 생성
     create_symbolic_link "$jar_path" "$target_link"
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR link creation completed successfully"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR link creation completed successfully" >&2
 }
 
 # 메인 진입점

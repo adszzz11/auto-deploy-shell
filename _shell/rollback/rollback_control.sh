@@ -84,7 +84,7 @@ load_environment() {
     export TARGET_LINK="${INSTANCE_DIR}/current.jar"
     export BACKUP_LINK="${TARGET_LINK}.bak"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT" >&2
     return 0
 }
 
@@ -117,7 +117,7 @@ execute_rollback() {
     check_disk_space "$BACKUP_LINK" "$INSTANCE_DIR"
 
     echo ""
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Initiating rollback for instance $instance_num on port $PORT"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Initiating rollback for instance $instance_num on port $PORT" >&2
 
     # 7. Nginx DOWN (옵션에 따라)
     if [ "${ROLLBACK_NGINX_DOWN_BEFORE:-true}" = "true" ]; then
@@ -135,7 +135,7 @@ execute_rollback() {
 
     # 9. 애플리케이션 재시작 (옵션에 따라)
     restart_application "$INSTANCE_DIR" "$PORT" "${ROLLBACK_APP_MODE:-restart}" "${JAVA_OPTS:-}" "$SCRIPT_DIR" || {
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Application restart failed"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Application restart failed" >&2
     }
 
     # 10. Nginx UP (옵션에 따라)

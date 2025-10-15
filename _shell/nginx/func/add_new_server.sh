@@ -9,11 +9,11 @@ add_new_server() {
     local server_ip="${3:-${NGINX_SERVER_IP:-127.0.0.1}}"
     local config_postfix="${4:-${NGINX_CONFIG_POSTFIX:-}}"  # 예: "weight=5", "max_fails=3 fail_timeout=30s", "backup"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Adding new server on port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Adding new server on port $port" >&2
 
     # 이미 존재하는 포트인지 확인
     if grep -q "server.*:$port" "$upstream_conf"; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port already exists"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port already exists" >&2
         return 0
     fi
 
@@ -28,9 +28,9 @@ add_new_server() {
     if sed -i.bak "/^[[:space:]]*}/ i\\
 ${server_line}
 " "$upstream_conf"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - New server added: $server_line"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - New server added: $server_line" >&2
     else
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to add new server for port $port"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to add new server for port $port" >&2
         return 1
     fi
 }

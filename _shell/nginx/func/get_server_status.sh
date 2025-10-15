@@ -7,7 +7,7 @@ get_server_status() {
     local upstream_conf="$2"
 
     if [ ! -f "$upstream_conf" ]; then
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $upstream_conf"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $upstream_conf" >&2
         return 1
     fi
 
@@ -35,5 +35,5 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         exit 1
     fi
     status=$(get_server_status "$1" "$2")
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status" >&2
 fi

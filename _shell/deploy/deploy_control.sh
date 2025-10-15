@@ -101,13 +101,13 @@ load_environment() {
     if [ "$type" = "B" ]; then
         machine_id_offset=5
     elif [ "$type" != "A" ]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Invalid TYPE: $type, using A (0-4)"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Invalid TYPE: $type, using A (0-4)" >&2
         type="A"
     fi
 
     export MACHINE_ID=$((instance_num + machine_id_offset))
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT, TYPE=$type, MACHINE_ID=$MACHINE_ID"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded: SERVICE=$SERVICE_NAME, PORT=$PORT, TYPE=$type, MACHINE_ID=$MACHINE_ID" >&2
     return 0
 }
 
@@ -117,7 +117,7 @@ execute_deploy() {
     local env_file="$2"
     local jar_name="${3:-}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting deployment process"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting deployment process" >&2
 
     # 1. 파라미터 검증
     validate_deploy_parameters "$instance_num" "$env_file" "deploy"
@@ -179,7 +179,7 @@ execute_deploy() {
         return 1
     }
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Deployment completed for instance $instance_num (port $PORT)"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Deployment completed for instance $instance_num (port $PORT)" >&2
     return 0
 }
 
@@ -188,7 +188,7 @@ execute_remove() {
     local instance_num="$1"
     local env_file="$2"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting instance removal process"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting instance removal process" >&2
 
     # 1. 파라미터 검증
     validate_deploy_parameters "$instance_num" "$env_file" "remove"
@@ -199,7 +199,7 @@ execute_remove() {
     # 3. 인스턴스 제거
     handle_instance_removal "$INSTANCE_DIR" "$PORT" "$SCRIPT_DIR" "$UPSTREAM_CONF"
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance $instance_num removed successfully"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance $instance_num removed successfully" >&2
     return 0
 }
 

@@ -7,10 +7,10 @@ check_port_exists() {
     local upstream_conf="$2"
 
     if grep -q "server.*:$port" "$upstream_conf"; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port exists in configuration"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port exists in configuration" >&2
         return 0
     else
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port does NOT exist in configuration"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $port does NOT exist in configuration" >&2
         return 1
     fi
 }

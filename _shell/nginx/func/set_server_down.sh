@@ -7,13 +7,13 @@ set_server_down() {
     local port="$1"
     local upstream_conf="${2:-${NGINX_UPSTREAM_CONF}}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting server on port $port to DOWN state"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting server on port $port to DOWN state" >&2
 
     # 해당 포트의 서버 라인을 주석 처리
     if sed -i.bak "/^[[:space:]]*server.*:$port/ s/^/# /" "$upstream_conf"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port set to DOWN (commented out)"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Server on port $port set to DOWN (commented out)" >&2
     else
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to set port $port DOWN"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to set port $port DOWN" >&2
         return 1
     fi
 }

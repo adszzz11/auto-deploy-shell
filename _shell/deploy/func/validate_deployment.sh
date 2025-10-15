@@ -26,7 +26,7 @@ validate_deploy_parameters() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: instance=$instance_num, action=$action"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Parameters validated: instance=$instance_num, action=$action" >&2
     return 0
 }
 
@@ -36,7 +36,7 @@ validate_jar_directory() {
     local validate_enabled="${2:-${DEPLOY_VALIDATE_JAR_DIR:-true}}"
 
     if [ "$validate_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validation disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validation disabled" >&2
         return 0
     fi
 
@@ -50,7 +50,7 @@ validate_jar_directory() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validated: $jar_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validated: $jar_dir" >&2
     return 0
 }
 
@@ -60,12 +60,12 @@ validate_instance_directory() {
     local validate_enabled="${2:-${DEPLOY_VALIDATE_INSTANCE_DIR:-true}}"
 
     if [ "$validate_enabled" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory validation disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory validation disabled" >&2
         return 0
     fi
 
     if [ ! -d "$instance_dir" ]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory does not exist: $instance_dir"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory does not exist: $instance_dir" >&2
         return 1
     fi
 
@@ -74,7 +74,7 @@ validate_instance_directory() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory validated: $instance_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Instance directory validated: $instance_dir" >&2
     return 0
 }
 
@@ -96,7 +96,7 @@ validate_required_scripts() {
         fi
     done
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required scripts validated"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - All required scripts validated" >&2
     return 0
 }
 

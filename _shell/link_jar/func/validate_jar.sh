@@ -21,7 +21,7 @@ validate_jar_name() {
         fi
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR name validated: $jar_name"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR name validated: $jar_name" >&2
     return 0
 }
 
@@ -36,7 +36,7 @@ validate_jar_file_exists() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR file verified: $jar_path"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR file verified: $jar_path" >&2
     echo "$jar_path"
 }
 
@@ -54,7 +54,7 @@ validate_jar_directory() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validated: $jar_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR directory validated: $jar_dir" >&2
     return 0
 }
 
@@ -73,7 +73,7 @@ validate_target_directory() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Target directory validated: $target_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Target directory validated: $target_dir" >&2
     return 0
 }
 

@@ -7,8 +7,11 @@ build_exec_command() {
     local java_opts="${2:-${APP_JAVA_OPTS:-}}"
     local jar_name="${3:-${APP_JAR_NAME:-current.jar}}"
 
+    # Java 실행 파일 경로 (기본값: java)
+    local java_executable="${APP_JAVA_EXECUTABLE:-java}"
+
     # 기본 명령어 구성
-    local exec_command="java -jar ${jar_name} --server.port=${port}"
+    local exec_command="${java_executable} -jar ${jar_name} --server.port=${port}"
 
     # JAVA_OPTS가 있으면 추가
     if [ -n "$java_opts" ]; then
@@ -16,6 +19,26 @@ build_exec_command() {
     fi
 
     echo "$exec_command"
+}
+
+# Java 실행 파일 검증
+verify_java_executable() {
+    local java_executable="${1:-${APP_JAVA_EXECUTABLE:-java}}"
+
+    # Java 실행 파일 존재 확인
+    if ! command -v "$java_executable" &> /dev/null; then
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Java executable not found: $java_executable" >&2
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Please check APP_JAVA_EXECUTABLE setting" >&2
+        return 1
+    fi
+
+    # Java 버전 확인
+    local java_version
+    java_version=$("$java_executable" -version 2>&1 | head -n 1)
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Using Java: $java_version" >&2
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Java executable: $java_executable" >&2
+
+    return 0
 }
 
 # JAR 파일 존재 확인
@@ -27,7 +50,7 @@ verify_jar_file() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR file verified: $jar_name"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - JAR file verified: $jar_name" >&2
     return 0
 }
 
@@ -36,7 +59,7 @@ prepare_log_directory() {
     local log_dir="${1:-${APP_LOG_DIR:-./logs}}"
 
     if [ ! -d "$log_dir" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating log directory: $log_dir"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating log directory: $log_dir" >&2
         mkdir -p "$log_dir"
     fi
 

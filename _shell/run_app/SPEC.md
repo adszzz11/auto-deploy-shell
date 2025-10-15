@@ -153,6 +153,15 @@ java -jar <jar_name> --server.port=<port> <java_opts>
 # JAR 파일명
 export APP_JAR_NAME="current.jar"
 
+# Java 실행 파일 경로 (기본값: java)
+# 여러 Java 버전 사용 예시:
+#   - Java 8:  export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-8-openjdk/bin/java"
+#   - Java 11: export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-11-openjdk/bin/java"
+#   - Java 17: export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-17-openjdk/bin/java"
+#   - Java 21: export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-21-openjdk/bin/java"
+#   - 기본값:  export APP_JAVA_EXECUTABLE="java"
+export APP_JAVA_EXECUTABLE="java"
+
 # 기본 Java 옵션
 export APP_JAVA_OPTS="--spring.profiles.active=prod"
 

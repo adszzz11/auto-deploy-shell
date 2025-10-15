@@ -118,7 +118,7 @@ main() {
                 exit 1
             fi
             status=$(get_server_status "$@")
-            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status"
+            echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Port $1 status: $status" >&2
             ;;
         list-active)
             list_active_servers "${1:-${NGINX_UPSTREAM_CONF}}"

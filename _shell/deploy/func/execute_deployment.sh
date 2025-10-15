@@ -10,7 +10,7 @@ execute_application_deployment() {
     local java_opts="${4:-}"
     local script_dir="${5:-}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Deploying application on port $port from $instance_dir"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Deploying application on port $port from $instance_dir" >&2
 
     # run_app_control.sh 사용: <command> <port> [java_opts]
     local run_app_script="${script_dir}/../run_app/run_app_control.sh"
@@ -34,7 +34,7 @@ execute_application_deployment() {
         }
     ) || return 1
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application deployment completed"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application deployment completed" >&2
     return 0
 }
 
@@ -47,23 +47,23 @@ execute_instance_tests() {
 
     # test_instance 모듈이 비활성화된 경우
     if [ "${TEST_INSTANCE_ENABLED:-false}" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - test_instance module disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - test_instance module disabled" >&2
         return 0
     fi
 
     local test_script="${script_dir}/../test_instance/test_instance_control.sh"
 
     if [ ! -x "$test_script" ]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - test_instance_control.sh not found or not executable: $test_script"
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Skipping instance tests"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - test_instance_control.sh not found or not executable: $test_script" >&2
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Skipping instance tests" >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running instance tests (mode: ${TEST_MODE:-simple})"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running instance tests (mode: ${TEST_MODE:-simple})" >&2
 
     # test_instance_control.sh 실행: test <port> [env_file]
     if "$test_script" test "$port" "$env_file"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance tests passed for port $port"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Instance tests passed for port $port" >&2
         return 0
     else
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Instance tests failed for port $port" >&2
@@ -79,25 +79,25 @@ execute_test_script() {
     local test_timeout="${4:-${DEPLOY_TEST_TIMEOUT:-60}}"
 
     if [ "$run_tests" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test execution disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test execution disabled" >&2
         return 0
     fi
 
     if [ -z "$test_script" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No legacy test script provided, skipping"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - No legacy test script provided, skipping" >&2
         return 0
     fi
 
     if [ ! -x "$test_script" ]; then
-        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Test script not executable: $test_script"
+        echo "[WARN] $(date '+%Y-%m-%d %H:%M:%S') - Test script not executable: $test_script" >&2
         return 0
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running legacy test script on port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running legacy test script on port $port" >&2
 
     # 타임아웃과 함께 테스트 실행
     if timeout "$test_timeout" "$test_script" "$port"; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Legacy tests passed for port $port"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Legacy tests passed for port $port" >&2
         return 0
     else
         local exit_code=$?
@@ -119,7 +119,7 @@ control_nginx_upstream() {
     local nginx_control="${5:-${DEPLOY_NGINX_CONTROL:-true}}"
 
     if [ "$nginx_control" != "true" ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Nginx control disabled"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Nginx control disabled" >&2
         return 0
     fi
 
@@ -130,7 +130,7 @@ control_nginx_upstream() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting nginx upstream $action for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting nginx upstream $action for port $port" >&2
 
     # nginx_control.sh 사용: <command> [port] [upstream_conf]
     "$nginx_script" "$action" "$port" "$upstream_conf" || {
@@ -138,7 +138,7 @@ control_nginx_upstream() {
         return 1
     }
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Nginx upstream $action completed"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Nginx upstream $action completed" >&2
     return 0
 }
 
@@ -156,7 +156,7 @@ create_jar_link() {
         return 1
     fi
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating JAR symbolic link"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Creating JAR symbolic link" >&2
 
     # link_jar_control.sh 사용: link <jar_trunk_dir> <target_link> [jar_name|pid_file]
     if [ -n "$jar_name" ]; then
@@ -173,7 +173,7 @@ create_jar_link() {
         }
     fi
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR link created successfully"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - JAR link created successfully" >&2
     return 0
 }
 
@@ -185,7 +185,7 @@ setup_instance_logs() {
     local log_base_dir="$4"
     local script_dir="$5"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting up logs for instance $instance_num"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Setting up logs for instance $instance_num" >&2
 
     # 로그 디렉터리 생성
     local log_dir="${log_base_dir}/${service_name}/instances/${instance_num}"
@@ -207,7 +207,7 @@ setup_instance_logs() {
         return 1
     }
 
-    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Logs setup completed: $log_link -> $log_dir"
+    echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Logs setup completed: $log_link -> $log_dir" >&2
     return 0
 }
 

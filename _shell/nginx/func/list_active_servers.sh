@@ -5,14 +5,14 @@ set -euo pipefail
 list_active_servers() {
     local upstream_conf="$1"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Listing active servers"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Listing active servers" >&2
 
     if [ ! -f "$upstream_conf" ]; then
-        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $upstream_conf"
+        echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Configuration file not found: $upstream_conf" >&2
         return 1
     fi
 
-    echo "Active servers:"
+    echo "Active servers:" >&2
     grep "^[[:space:]]*server" "$upstream_conf" | grep -v "^#" || echo "  (none)"
 }
 

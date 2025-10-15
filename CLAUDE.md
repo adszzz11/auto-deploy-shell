@@ -255,6 +255,7 @@ export UPSTREAM_CONF="/etc/nginx/conf.d/upstream.conf"  # Nginx 설정
 
 # 선택
 export LOG_BASE_DIR="/home/system/logs"         # 로그 디렉터리
+export APP_JAVA_EXECUTABLE="java"               # Java 실행 파일 경로
 export JAVA_OPTS="--spring.profiles.active=prod --profile.machine_id=\${MACHINE_ID}"
 export APP_MODE="restart"                       # restart, start, stop
 export TEST_SCRIPT="./test_instance.sh"         # 사용자 테스트 스크립트
@@ -423,6 +424,38 @@ if [ "$FAIL" -eq 0 ]; then
 else
     error_exit "Tests failed for port $PORT"
 fi
+```
+
+### Java 버전 관리
+
+여러 Java 버전을 사용하는 환경에서는 `APP_JAVA_EXECUTABLE` 변수를 설정하여 특정 Java 버전을 사용할 수 있습니다.
+
+```bash
+# base.env 또는 myapp.env에서 설정
+
+# Java 8 사용
+export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-8-openjdk/bin/java"
+
+# Java 11 사용
+export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-11-openjdk/bin/java"
+
+# Java 17 사용 (Amazon Corretto)
+export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-17-amazon-corretto/bin/java"
+
+# Java 21 사용
+export APP_JAVA_EXECUTABLE="/usr/lib/jvm/java-21-openjdk/bin/java"
+
+# 시스템 기본 Java 사용 (기본값)
+export APP_JAVA_EXECUTABLE="java"
+```
+
+**Java 버전 확인**:
+```bash
+# 설정된 Java 실행 파일의 버전 확인
+${APP_JAVA_EXECUTABLE} -version
+
+# 또는 배포 시 자동으로 로그에 출력됨
+# [INFO] Using Java: openjdk version "17.0.9" 2023-10-17
 ```
 
 ### 검증 명령

@@ -95,7 +95,7 @@ load_environment() {
         fi
 
         source "$env_file"
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded from: $env_file"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Environment loaded from: $env_file" >&2
     fi
 
     return 0
@@ -106,7 +106,7 @@ wait_for_warmup() {
     local warmup_wait="${TEST_WARMUP_WAIT:-5}"
 
     if [ "$warmup_wait" -gt 0 ]; then
-        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${warmup_wait}s for application warmup..."
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting ${warmup_wait}s for application warmup..." >&2
         sleep "$warmup_wait"
     fi
 }
@@ -128,7 +128,7 @@ execute_test_by_mode() {
 
     local mode="${TEST_MODE:-simple}"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test mode: $mode"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Test mode: $mode" >&2
 
     # Warmup 대기
     wait_for_warmup
@@ -161,7 +161,7 @@ execute_http_test() {
     load_environment "$env_file"
     validate_test_parameters "$port" "$env_file"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running HTTP test for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running HTTP test for port $port" >&2
     wait_for_warmup
 
     test_http_status_with_retry "$port"
@@ -175,7 +175,7 @@ execute_tcp_test() {
     load_environment "$env_file"
     validate_test_parameters "$port" "$env_file"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running TCP test for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running TCP test for port $port" >&2
 
     test_tcp_connection_with_retry "$port"
 }
@@ -188,7 +188,7 @@ execute_response_test() {
     load_environment "$env_file"
     validate_test_parameters "$port" "$env_file"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running response time test for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running response time test for port $port" >&2
     wait_for_warmup
 
     test_response_time_with_retry "$port"
@@ -204,7 +204,7 @@ execute_custom_test() {
     validate_test_parameters "$port" "$env_file"
     validate_custom_test_script
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running custom tests for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running custom tests for port $port" >&2
 
     run_custom_tests "$port" "$service_name" "$env_file"
 }
@@ -295,10 +295,10 @@ execute_full_test() {
     echo ""
     echo "=================================================="
     if [ "$all_passed" = "true" ]; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - All tests passed"
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - All tests passed" >&2
         return 0
     else
-        echo "[PARTIAL] $(date '+%Y-%m-%d %H:%M:%S') - Some tests failed"
+        echo "[PARTIAL] $(date '+%Y-%m-%d %H:%M:%S') - Some tests failed" >&2
         return 1
     fi
 }
@@ -307,7 +307,7 @@ execute_full_test() {
 execute_quick_test() {
     local port="$1"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running quick test for port $port (no retries)"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running quick test for port $port (no retries)" >&2
 
     # 재시도 설정 무시
     export TEST_RETRY_COUNT=1
@@ -324,7 +324,7 @@ execute_benchmark() {
     load_environment "$env_file"
     validate_test_parameters "$port" "$env_file"
 
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running benchmark for port $port"
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Running benchmark for port $port" >&2
 
     test_response_time_benchmark "$port"
 }
