@@ -273,8 +273,27 @@ export APP_HEALTH_CHECK_INTERVAL="2"
 - 파일명 형식: `app-<port>.log`
 - 예시: `logs/app-8080.log`
 
+### 콘솔 로그 제어
+애플리케이션 콘솔 출력(stdout/stderr)을 로그 파일에 저장할지 여부를 설정할 수 있습니다.
+
+**환경 변수**:
+```bash
+# base.env 또는 myapp.env에서 설정
+export APP_CONSOLE_LOG_ENABLED="true"   # 로그 파일에 출력 (기본값)
+export APP_CONSOLE_LOG_ENABLED="false"  # /dev/null로 버림 (로그 저장 안함)
+```
+
+**동작**:
+- `true`: 콘솔 출력을 `${log_dir}/app-${port}.log` 파일에 저장
+- `false`: 콘솔 출력을 `/dev/null`로 리다이렉트 (디스크 공간 절약)
+
+**사용 사례**:
+- 프로덕션 환경에서 별도 로깅 시스템 사용 시 (예: ELK Stack, Logback 파일 로거)
+- 디스크 I/O 최소화가 필요한 경우
+- 애플리케이션 자체에서 로그 파일을 관리하는 경우
+
 ### nohup 출력
-- 표준 출력(stdout)과 표준 에러(stderr)를 모두 로그 파일로 리다이렉트
+- 표준 출력(stdout)과 표준 에러(stderr)를 로그 파일 또는 /dev/null로 리다이렉트
 - 백그라운드 실행 시 터미널 독립적으로 작동
 
 ## 9. 에러 처리

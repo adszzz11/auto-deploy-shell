@@ -35,8 +35,20 @@ start_application() {
 
     echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Starting application with command: $exec_command" >&2
 
+    # 콘솔 로그 출력 여부 확인
+    local console_log_enabled="${APP_CONSOLE_LOG_ENABLED:-true}"
+    local log_output
+
+    if [ "$console_log_enabled" = "true" ]; then
+        log_output="${log_dir}/app-${port}.log"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Console log will be saved to: $log_output" >&2
+    else
+        log_output="/dev/null"
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Console log is disabled (output to /dev/null)" >&2
+    fi
+
     # 백그라운드에서 애플리케이션 시작
-    nohup $exec_command > "${log_dir}/app-${port}.log" 2>&1 &
+    nohup $exec_command > "$log_output" 2>&1 &
     local start_pid=$!
 
     # 잠시 대기 후 프로세스가 실제로 시작되었는지 확인
