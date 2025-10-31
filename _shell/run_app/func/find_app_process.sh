@@ -6,9 +6,10 @@ find_app_process() {
     local port="$1"
     local jar_name="${2:-${APP_JAR_NAME:-current.jar}}"
 
-    # 프로세스 검색 패턴: java -jar <jar_name> --server.port=<port>
+    # 프로세스 검색 패턴: java [...JVM_OPTS...] -jar <jar_name> [...] --server.port=<port>
+    # JVM_OPTS가 -jar 앞에 있을 수 있으므로 regex 사용
     local pid
-    pid=$(pgrep -f "java -jar ${jar_name} --server.port=${port}" 2>/dev/null || true)
+    pid=$(pgrep -f "\-jar ${jar_name}.*--server.port=${port}" 2>/dev/null || true)
 
     if [ -n "$pid" ]; then
         echo "$pid"

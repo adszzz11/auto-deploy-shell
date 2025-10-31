@@ -10,8 +10,18 @@ build_exec_command() {
     # Java 실행 파일 경로 (기본값: java)
     local java_executable="${APP_JAVA_EXECUTABLE:-java}"
 
-    # 기본 명령어 구성
-    local exec_command="${java_executable} -jar ${jar_name} --server.port=${port}"
+    # JVM 옵션 (메모리, GC 등)
+    local jvm_opts="${JVM_OPTS:-}"
+
+    # 기본 명령어 구성 (JVM_OPTS -> JAR -> 포트 -> JAVA_OPTS 순서)
+    local exec_command="${java_executable}"
+
+    # JVM_OPTS가 있으면 추가
+    if [ -n "$jvm_opts" ]; then
+        exec_command="${exec_command} ${jvm_opts}"
+    fi
+
+    exec_command="${exec_command} -jar ${jar_name} --server.port=${port}"
 
     # JAVA_OPTS가 있으면 추가
     if [ -n "$java_opts" ]; then

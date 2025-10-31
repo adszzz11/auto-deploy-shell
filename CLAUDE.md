@@ -256,6 +256,7 @@ export UPSTREAM_CONF="/etc/nginx/conf.d/upstream.conf"  # Nginx 설정
 # 선택
 export LOG_BASE_DIR="/home/system/logs"         # 로그 디렉터리
 export APP_JAVA_EXECUTABLE="java"               # Java 실행 파일 경로
+export JVM_OPTS=""                              # JVM 옵션 (메모리, GC 등)
 export JAVA_OPTS="--spring.profiles.active=prod --profile.machine_id=\${MACHINE_ID}"
 export APP_MODE="restart"                       # restart, start, stop
 export TEST_SCRIPT="./test_instance.sh"         # 사용자 테스트 스크립트
@@ -458,6 +459,41 @@ ${APP_JAVA_EXECUTABLE} -version
 # [INFO] Using Java: openjdk version "17.0.9" 2023-10-17
 ```
 
+### JVM 옵션 관리
+
+JVM 옵션과 Spring Boot 옵션을 분리하여 관리합니다:
+
+- **JVM_OPTS**: JVM 레벨 설정 (메모리, GC, 디버깅 등)
+- **JAVA_OPTS**: 애플리케이션 레벨 설정 (Spring 프로필, 커스텀 속성 등)
+
+```bash
+# base.env 또는 myapp.env에서 설정
+
+# JVM 메모리 설정
+export JVM_OPTS="-Xmx1024m -Xms512m"
+
+# JVM + GC 최적화
+export JVM_OPTS="-Xmx2048m -Xms1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+# JVM + 쓰레드 풀 설정
+export JVM_OPTS="-Xmx1024m -Xms512m -XX:+UseG1GC -Dspring.threads.virtual.enabled=true"
+
+# 디버깅 활성화
+export JVM_OPTS="-Xmx1024m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+
+# Spring Boot 옵션 (별도 설정)
+export JAVA_OPTS="--spring.profiles.active=prod --profile.machine_id=\${MACHINE_ID}"
+```
+
+**최종 실행 명령**: `java [JVM_OPTS] -jar current.jar --server.port=PORT [JAVA_OPTS]`
+
+예:
+```bash
+# JVM_OPTS="-Xmx1024m -Xms512m"
+# JAVA_OPTS="--spring.profiles.active=prod"
+# 실행 명령: java -Xmx1024m -Xms512m -jar current.jar --server.port=8080 --spring.profiles.active=prod
+```
+
 ### 검증 명령
 
 ```bash
@@ -486,7 +522,7 @@ nginx -t
 ./_shell/nginx/nginx_control.sh test-config
 
 # 프로세스 확인
-pgrep -f "java -jar current.jar --server.port=8080"
+pgrep -f "\-jar current.jar.*--server.port=8080"
 
 # 로그 확인
 tail -f ${LOG_BASE_DIR}/${SERVICE_NAME}/instances/0/*.log
