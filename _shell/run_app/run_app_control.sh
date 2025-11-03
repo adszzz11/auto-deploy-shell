@@ -47,6 +47,7 @@ Environment variables (set in run_app.env):
   APP_SIGTERM_TIMEOUT   - SIGTERM timeout in seconds (default: 10)
   APP_SIGKILL_TIMEOUT   - SIGKILL timeout in seconds (default: 5)
   APP_START_WAIT        - Wait time after start in seconds (default: 2)
+  APP_PORT_WAIT_TIMEOUT - Port listening wait timeout in seconds (default: 10)
   APP_LOG_DIR           - Log directory (default: ./logs)
 
 Modes:

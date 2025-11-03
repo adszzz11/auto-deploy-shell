@@ -2,6 +2,31 @@
 set -euo pipefail
 
 
+# 포트가 LISTEN 상태가 될 때까지 대기하는 함수
+wait_for_port_listen() {
+    local port="$1"
+    local timeout="${2:-10}"  # 기본 10초 대기
+    local interval="${3:-1}"  # 기본 1초마다 체크
+
+    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Waiting for port $port to start listening (timeout: ${timeout}s)..." >&2
+
+    local elapsed=0
+    while [ $elapsed -lt $timeout ]; do
+        # netstat으로 포트가 LISTEN 상태인지 확인
+        if netstat -tln 2>/dev/null | grep -q ":${port} .*LISTEN"; then
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Port $port is now listening" >&2
+            return 0
+        fi
+
+        sleep "$interval"
+        elapsed=$((elapsed + interval))
+        echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Still waiting for port $port... (${elapsed}s elapsed)" >&2
+    done
+
+    echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Port $port did not start listening within ${timeout}s" >&2
+    return 1
+}
+
 # 애플리케이션 시작 함수
 start_application() {
     local port="$1"
@@ -55,7 +80,17 @@ start_application() {
     sleep "$start_wait"
 
     if kill -0 "$start_pid" 2>/dev/null; then
-        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application started on port $port (PID: $start_pid)" >&2
+        echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application process started (PID: $start_pid)" >&2
+
+        # 포트가 LISTEN 상태가 될 때까지 대기
+        local port_wait_timeout="${APP_PORT_WAIT_TIMEOUT:-10}"
+        if wait_for_port_listen "$port" "$port_wait_timeout"; then
+            echo "[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S') - Application started successfully on port $port (PID: $start_pid)" >&2
+            return 0
+        else
+            echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Application process started but port $port is not listening" >&2
+            return 1
+        fi
     else
         echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Failed to start application on port $port" >&2
         return 1
